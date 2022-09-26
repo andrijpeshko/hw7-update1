@@ -1,55 +1,55 @@
-import { galleryItems } from './gallery-items.js';
+import { galleryItems } from "./gallery-items.js";
+// Change code below this line
+const galleryDiv = document.querySelector(".gallery");
 
-const galleryContainer = document.querySelector('.gallery');
+const markup = galleryItems.reduce(
+  (acc, { preview, original, description }) =>
+    acc +
+    `<div class="gallery__item">
+  <a class="gallery__link" href="${original}">
+    <img
+      class="gallery__image"
+      src="${preview}"
+      data-source="${original}"
+      alt="${description}"
+    />
+  </a>
+</div>`,
+  ""
+);
+galleryDiv.insertAdjacentHTML("beforeend", markup);
 
-function createImageGalleryMarkup(galleryItems) {
-    return galleryItems.map(({ preview, original, description }) => {
-        return `
-        <div class="gallery__item">
-         <a class="gallery__link" href="${original}">
-          <img
-          class="gallery__image"
-          src="${preview}"
-          data-source="${original}"
-          alt="${description}"
-          />
-         </a>
-        </div>
-        `;
-    }).join('');
+galleryDiv.addEventListener("click", onGalleryClick);
+
+function onGalleryClick(evt) {
+  evt.preventDefault();
+
+  const gallaryItem = evt.target.closest(".gallery__item");
+  if (!gallaryItem) return;
+
+  const img = gallaryItem.querySelector(".gallery__image");
+  const src = img.dataset.source;
+  showModal(src);
 }
 
-const galleryMarkup = createImageGalleryMarkup(galleryItems);
-galleryContainer.insertAdjacentHTML('beforeend', galleryMarkup);
+function showModal(src) {
+  const basicLightbox = window.basicLightbox;
+  const instance = basicLightbox.create(getBigImgTemplate(src));
+  instance.show();
 
+  function getBigImgTemplate(src) {
+    return `
+  <img src="${src}" width="800" height="600">
+  `;
+  }
 
-console.log(createImageGalleryMarkup(galleryItems));
+  window.addEventListener("keydown", onKeyDown);
 
-galleryContainer.addEventListener('click', evt => {
-    evt.preventDefault();
-    const isGalleryEl = evt.target.classList.contains('gallery__image');
-    if (!isGalleryEl) {
-        return;
-    }
+  function onKeyDown(evt) {
+    if (evt.key !== "Escape") return;
 
-    const instance = basicLightbox.create(`
-        <img src="${evt.target.dataset.source}" width="800" height="600">
-    `, {
-        onShow: () => {
-            document.addEventListener("keydown", closeEscKeyDown);
-        },
-        onClose: () => {
-            document.removeEventListener("keydown", closeEscKeyDown);
-        },
-    }
-    );
-
-    function closeEscKeyDown(evt) {
-     if (evt.key === 'Escape') {
-         instance.close();
-         console.log(evt.key);
-     }
-    }
-
-    instance.show();
-});
+    instance.close();
+    window.removeEventListener("keydown", onKeyDown);
+  }
+}
+console.log(galleryItems);
