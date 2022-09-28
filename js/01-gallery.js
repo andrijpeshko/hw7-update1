@@ -46,11 +46,12 @@ function showModal(src) {
 
   window.addEventListener("keydown", onKeyDown);
 
-  function onKeyDown(evt) {
+  
+}
+function onKeyDown(evt) {
     if (evt.key !== "Escape") return;
     if (store.lightbox && store.lightbox.close) {
       instance.close()
     }
   }
-}
 console.log(galleryItems);
