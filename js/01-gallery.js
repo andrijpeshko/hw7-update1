@@ -1,7 +1,7 @@
 import { galleryItems } from "./gallery-items.js";
 // Change code below this line
 const galleryDiv = document.querySelector(".gallery");
-
+const store = {Lightbox:null }
 const markup = galleryItems.reduce(
   (acc, { preview, original, description }) =>
     acc +
@@ -36,6 +36,7 @@ function showModal(src) {
   const basicLightbox = window.basicLightbox;
   const instance = basicLightbox.create(getBigImgTemplate(src));
   instance.show();
+  store.lightbox = instance
 
   function getBigImgTemplate(src) {
     return `
@@ -47,9 +48,9 @@ function showModal(src) {
 
   function onKeyDown(evt) {
     if (evt.key !== "Escape") return;
-
-    instance.close();
-    window.removeEventListener("keydown", onKeyDown);
+    if (store.lightbox && store.lightbox.close) {
+      instance.close()
+    }
   }
 }
 console.log(galleryItems);
